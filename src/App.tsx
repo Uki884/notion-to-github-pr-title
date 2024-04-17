@@ -37,7 +37,7 @@ function App() {
         );
         const resJson = await res.json();
         setJson(resJson);
-        console.log(resJson);
+        console.log(resJson.recordMap.space_view);
         // alert(id);
       }
     );
@@ -57,7 +57,7 @@ function App() {
       <h1>Vite + React</h1>
       <div className="card">
         <button onClick={() => setCount((count) => count + 1)}>
-          data is {JSON.stringify(json)}
+          data is {JSON.stringify(json?.recordMap?.space_view)}
         </button>
         <p>
           Edit <code>src/App.tsx</code> and save to test HMR
