@@ -11,13 +11,15 @@ const manifest = defineManifest({
   //   default_icon: "icons/icon128.png",
   //   default_title: "example",
   // },
+  action: { default_popup: "index.html" },
   background: {
     service_worker: "src/background/index.ts",
   },
   options_ui: {
     page: "src/options/index.html",
   },
-  permissions: ["activeTab", "storage"],
+  permissions: ["activeTab", "storage", "cookies"],
+  host_permissions: ["*://*.notion.so/"],
 });
 
 export default defineConfig({
