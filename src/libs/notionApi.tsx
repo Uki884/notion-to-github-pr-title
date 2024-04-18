@@ -3,25 +3,9 @@ type Props = {
   notionUserId: string;
 };
 
-type ApiPaths = 'getSpaces' | 'getUserHomePages' | 'getPublicSpaceData';
+type ApiPaths = 'getSpaces' | 'getUserHomePages' | 'getPublicSpaceData' | 'getRecordValues';
 
 export const notionApi = ({ token, notionUserId }: Props) => {
-
-  const apiCall = async ({ apiPath, body }: { apiPath: ApiPaths, body?: object }) => {
-    const res =  await fetch(
-      `https://www.notion.so/api/v3/${apiPath}`,
-      {
-        method: "POST",
-        headers: {
-          "content-type": "application/json",
-          cookie: `token_v2=${token}`,
-          'x-notion-active-user-header': notionUserId,
-        },
-        body: body ? JSON.stringify(body) : undefined,
-      }
-    );
-    return await res.json();
-  }
 
   const getSpaces = async () => {
     const res =  await apiCall({ apiPath: 'getSpaces' });
@@ -45,10 +29,10 @@ export const notionApi = ({ token, notionUserId }: Props) => {
       const spaceData = await getSpace({ spaceId });
       return {
         ...spaceData,
-        views: speceViews.find((view) => view.spaceId === spaceId)
+        view: speceViews.find((view) => view.spaceId === spaceId)
       }
-    }));  
-  
+    }));
+
     return userSpaces
   };
 
@@ -57,8 +41,62 @@ export const notionApi = ({ token, notionUserId }: Props) => {
     return res.results[0];
   };
 
+  const getBookmarks = async ({ spaceViewId }: { spaceViewId: string }) => {
+    const res = await apiCall({
+      apiPath: "getUserHomePages",
+      body: { spaceViewId },
+    });
+    const bookmarkPageIds: any[] =
+      res?.recordMap?.space_view[spaceViewId]?.value?.bookmarked_pages || [];
+
+    const results = await getRecordValues(
+      bookmarkPageIds.map((id) => ({ table: "block", id }))
+    ) as any[];
+
+    const pages = (results || [])
+      .filter((result) => result.value)
+      .map((result) => result.value);
+
+    console.log("results", pages);
+
+    return pages;
+  };
+
+  const getRecordValues = async (
+    body: Array<{
+      table: string;
+      id: string;
+    }>
+  ) => {
+    const response = await apiCall({
+      apiPath: "getRecordValues",
+      body: { requests: body },
+    });
+    return response.results;
+  }
+
+    const apiCall = async ({
+      apiPath,
+      body,
+    }: {
+      apiPath: ApiPaths;
+      body?: object;
+    }) => {
+      const res = await fetch(`https://www.notion.so/api/v3/${apiPath}`, {
+        method: "POST",
+        headers: {
+          "content-type": "application/json",
+          cookie: `token_v2=${token}`,
+          "x-notion-active-user-header": notionUserId,
+        },
+        body: body ? JSON.stringify(body) : undefined,
+      });
+      return await res.json();
+    };
+
   return {
     getSpaces,
-    getUserSpaces
-  }
+    getUserSpaces,
+    getBookmarks,
+  };
 };

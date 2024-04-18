@@ -11,9 +11,12 @@ function App({ notionData }: Props) {
   console.log('app token', notionData)
   const [spaces, setSpaces] = useState([] as any)
   const [selectedSpaceId, setSelectedSpaceId] = useState<string>("" as string)
-  const [selectedSpace, setSelectedSpace] = useState<string>("" as string)
-  const [json, setJson] = useState({} as any)
-  const { getUserSpaces } = notionApi({ token: notionData.token, notionUserId: notionData.notionUserId })
+  const [selectedSpace, setSelectedSpace] = useState<any>({})
+  const [bookmarks, setBookmarks] = useState<any[]>([])
+  const { getUserSpaces, getBookmarks } = notionApi({
+    token: notionData.token,
+    notionUserId: notionData.notionUserId,
+  });
 
   useEffect(() => {
     const fetch = async () => {
@@ -25,17 +28,43 @@ function App({ notionData }: Props) {
   }, []);
 
   useEffect(() => {
+    const fetch = async () => {
+      if (!selectedSpace) {
+        return;
+      }
+      const data = await getBookmarks({ spaceViewId: selectedSpace.view.spaceViewId });
+      setBookmarks(data);
+    };
+    fetch();
+  }, [selectedSpace]);
 
-  }, [selectedSpaceId])
+  const handleSpaceClick = async (space: any) => {
+    console.log('space', space)
+    // TODO: chromeのstorageに保存
+    setSelectedSpace(space)
+  };
 
   return (
     <div className="App">
-      { spaces.map((space: any) => (
+      {spaces.map((space: any) => (
         <div key={space.id}>
-          <img src={space.icon} alt={space.name} />
-          <button onClick={() => setSelectedSpaceId(space.id)}>{space.name}</button>
+          {/* <img src={space.icon} alt={space.name} /> */}
+          <button onClick={() => handleSpaceClick(space)}>{space.name}</button>
         </div>
-      )) }
+      ))}
+      {bookmarks.map((bookmark) => {
+        return (
+          <div key={bookmark.id}>
+            <a
+              href={`https://www.notion.so/${bookmark.id.replace(/-/g, "")}`}
+              target="_blank"
+              rel="noreferrer"
+            >
+              a
+            </a>
+          </div>
+        );
+      })}
     </div>
   );
 }
