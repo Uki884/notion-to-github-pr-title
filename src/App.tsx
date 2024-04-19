@@ -2,16 +2,21 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { NotionData } from './providers/NotionDataProvider';
 import { notionApi } from './libs';
+import { getBucket } from '@extend-chrome/storage';
 
 type Props = {
   notionData: NotionData;
 };
 
+interface MyBucket {
+  selectedSpaceId: string | null;
+}
+
+const bucket = getBucket<MyBucket>('my_bucket', 'sync');
+
 function App({ notionData }: Props) {
-  console.log('app token', notionData)
   const [spaces, setSpaces] = useState([] as any)
   const [selectedSpaceId, setSelectedSpaceId] = useState<string>("" as string)
-  const [selectedSpace, setSelectedSpace] = useState<any>({})
   const [bookmarks, setBookmarks] = useState<any[]>([])
   const { getUserSpaces, getBookmarks } = notionApi({
     token: notionData.token,
@@ -19,9 +24,18 @@ function App({ notionData }: Props) {
   });
 
   useEffect(() => {
+    (async () => {
+      const value = await bucket.get();
+      console.log('selectedSpaceId', selectedSpaceId)
+      if (value.selectedSpaceId) {
+        setSelectedSpaceId(value.selectedSpaceId);
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
     const fetch = async () => {
       const data = await getUserSpaces();
-      console.log('data', data)
       setSpaces(data)
     }
     fetch()
@@ -29,19 +43,19 @@ function App({ notionData }: Props) {
 
   useEffect(() => {
     const fetch = async () => {
-      if (!selectedSpace) {
+      if (!selectedSpaceId) {
         return;
       }
-      const data = await getBookmarks({ spaceViewId: selectedSpace.view.spaceViewId });
+      const data = await getBookmarks({ spaceViewId: selectedSpaceId });
       setBookmarks(data);
     };
     fetch();
-  }, [selectedSpace]);
+  }, [selectedSpaceId]);
 
   const handleSpaceClick = async (space: any) => {
-    console.log('space', space)
     // TODO: chromeのstorageに保存
-    setSelectedSpace(space)
+    bucket.set({ selectedSpaceId: space.view.spaceViewId });
+    setSelectedSpaceId(space.view.spaceViewId);
   };
 
   return (
@@ -53,6 +67,7 @@ function App({ notionData }: Props) {
         </div>
       ))}
       {bookmarks.map((bookmark) => {
+        const title = bookmark?.properties ? bookmark?.properties?.title[0][0] : "";
         return (
           <div key={bookmark.id}>
             <a
@@ -60,7 +75,7 @@ function App({ notionData }: Props) {
               target="_blank"
               rel="noreferrer"
             >
-              a
+              { title }
             </a>
           </div>
         );
