@@ -7,7 +7,7 @@ import { NotionDataProvider } from './providers/NotionDataProvider'
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <NotionDataProvider>
-      {({ notionData }) => <App notionData={notionData} />}
+      <App />
     </NotionDataProvider>
   </React.StrictMode>
 )

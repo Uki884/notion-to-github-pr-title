@@ -1,11 +1,10 @@
-type Props = {
-  token: string;
-  notionUserId: string;
-};
+import { useNotionStore } from "../stores/notionStore";
 
 type ApiPaths = 'getSpaces' | 'getUserHomePages' | 'getPublicSpaceData' | 'getRecordValues';
 
-export const notionApi = ({ token, notionUserId }: Props) => {
+export const notionApi = () => {
+  const authToken = useNotionStore((state) => state.authToken)
+  const notionUserId = useNotionStore((state) => state.notionUserId)
 
   const getSpaces = async () => {
     const res =  await apiCall('getSpaces');
@@ -73,7 +72,7 @@ export const notionApi = ({ token, notionUserId }: Props) => {
         method: "POST",
         headers: {
           "content-type": "application/json",
-          cookie: `token_v2=${token}`,
+          cookie: `token_v2=${authToken}`,
           "x-notion-active-user-header": notionUserId,
         },
         body: body ? JSON.stringify(body) : undefined,

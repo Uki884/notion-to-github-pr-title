@@ -1,23 +1,15 @@
 import { useEffect, useState } from 'react'
 import './App.css'
-import { NotionData } from './providers/NotionDataProvider';
 import { notionApi } from './libs';
 import { WorkSpaceSelect } from './features/WorkSpaceSelect';
 import { useChromeStorage } from './hooks/useChromeStorage';
 import { BookmarkList } from './features/BookmarkList';
 
-type Props = {
-  notionData: NotionData;
-};
-
-function App({ notionData }: Props) {
+function App() {
   const [spaces, setSpaces] = useState([] as any)
   const [bookmarks, setBookmarks] = useState<any[]>([])
   const { bucket } = useChromeStorage();
-  const { getUserSpaces, getBookmarks } = notionApi({
-    token: notionData.token,
-    notionUserId: notionData.notionUserId,
-  });
+  const { getUserSpaces, getBookmarks } = notionApi();
 
   const handleFetchBookMarks = async (selectedSpaceId: string) => {
     if (!selectedSpaceId) {
