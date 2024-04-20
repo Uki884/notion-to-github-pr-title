@@ -4,6 +4,7 @@ import { NotionData } from './providers/NotionDataProvider';
 import { notionApi } from './libs';
 import { WorkSpaceSelect } from './features/WorkSpaceSelect';
 import { useChromeStorage } from './hooks/useChromeStorage';
+import { BookmarkList } from './features/BookmarkList';
 
 type Props = {
   notionData: NotionData;
@@ -42,20 +43,7 @@ function App({ notionData }: Props) {
   return (
     <div className="App">
       <WorkSpaceSelect spaces={spaces} onFetchBookMarks={handleFetchBookMarks} />
-      {bookmarks.map((bookmark) => {
-        const title = bookmark?.properties ? bookmark?.properties?.title[0][0] : "";
-        return (
-          <div key={bookmark.id}>
-            <a
-              href={`https://www.notion.so/${bookmark.id.replace(/-/g, "")}`}
-              target="_blank"
-              rel="noreferrer"
-            >
-              { title }
-            </a>
-          </div>
-        );
-      })}
+      <BookmarkList bookmarks={bookmarks} />
     </div>
   );
 }
