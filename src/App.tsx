@@ -26,7 +26,6 @@ function App({ notionData }: Props) {
   useEffect(() => {
     (async () => {
       const value = await bucket.get();
-      console.log('selectedSpaceId', selectedSpaceId)
       if (value.selectedSpaceId) {
         setSelectedSpaceId(value.selectedSpaceId);
       }
