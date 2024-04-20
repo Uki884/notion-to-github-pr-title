@@ -14,12 +14,14 @@ type Space = {
 type SpaceStoreState = {
   spaces: Space[]
   selectedSpaceId: string
+  setSelectedSpaceId: (selectedSpaceId: string) => void
   fetchSpaces: () => Promise<void>
 }
 
 export const useSpaceStore = create<SpaceStoreState>((set) => ({
   spaces: [],
   selectedSpaceId: '',
+  setSelectedSpaceId: (selectedSpaceId: string) => set({ selectedSpaceId }),
   fetchSpaces: async () => {
     const notionStoreState = useNotionStore.getState();
     const { getUserSpaces } = notionApi({ authToken: notionStoreState.authToken, notionUserId: notionStoreState.notionUserId});

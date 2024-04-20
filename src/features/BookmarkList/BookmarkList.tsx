@@ -1,20 +1,15 @@
 import { useEffect } from "react";
 import { useBookmarkStore } from "../../stores/bookmarkStore";
-import { useChromeStorage } from "../../hooks/useChromeStorage";
+import { useSpaceStore } from "../../stores/spaceStore";
 
 export const BookmarkList = () => {
-  const { bucket } = useChromeStorage();
   const fetchBookmarks = useBookmarkStore((state) => state.fetchBookmarks)
   const bookmarks = useBookmarkStore((state) => state.bookmarks)
+  const selectedSpaceId = useSpaceStore((state) => state.selectedSpaceId);
 
   useEffect(() => {
-    (async () => {
-      const value = await bucket.get();
-      if (value.selectedSpaceId) {
-        await fetchBookmarks(value.selectedSpaceId);
-      }
-    })();
-  }, []);
+    fetchBookmarks(selectedSpaceId);
+  }, [selectedSpaceId]);
 
   return (
     <>
