@@ -1,11 +1,11 @@
-import { useNotionStore } from "../stores/notionStore";
-
 type ApiPaths = 'getSpaces' | 'getUserHomePages' | 'getPublicSpaceData' | 'getRecordValues';
 
-export const notionApi = () => {
-  const authToken = useNotionStore((state) => state.authToken)
-  const notionUserId = useNotionStore((state) => state.notionUserId)
+type Props = {
+  authToken: string
+  notionUserId: string
+}
 
+export const notionApi = ({authToken,notionUserId }: Props) => {
   const getSpaces = async () => {
     const res =  await apiCall('getSpaces');
     return res;
@@ -51,8 +51,6 @@ export const notionApi = () => {
     const pages = (results || [])
       .filter((result) => result.value)
       .map((result) => result.value);
-
-    console.log("results", pages);
 
     return pages;
   };

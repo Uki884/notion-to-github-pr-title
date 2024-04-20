@@ -1,15 +1,20 @@
+import { useEffect } from "react";
 import { useChromeStorage } from "../../hooks/useChromeStorage";
+import { useSpaceStore } from "../../stores/spaceStore";
+import { useBookmarkStore } from "../../stores/bookmarkStore";
 
-type Props = {
-  spaces: any[];
-  onFetchBookMarks: (selectedSpaceId: string) => Promise<void>;
-}
-
-export const WorkSpaceSelect = ({ spaces, onFetchBookMarks }: Props) => {
+export const WorkSpaceSelect = () => {
   const { bucket } = useChromeStorage();
+  const fetchSpaces = useSpaceStore((state) => state.fetchSpaces)
+  const fetchBookmarks = useBookmarkStore((state) => state.fetchBookmarks)
+  const spaces = useSpaceStore((state) => state.spaces)
+
+  useEffect(() => {
+    fetchSpaces();
+  }, []);
 
   const handleSpaceClick = async (space: any) => {
-    await onFetchBookMarks(space.view.spaceViewId);
+    await fetchBookmarks(space.view.spaceViewId);
     await bucket.set({ selectedSpaceId: space.view.spaceViewId });
   };
 

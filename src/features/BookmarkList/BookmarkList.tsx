@@ -1,8 +1,21 @@
-type Props = {
-  bookmarks: any[];
-};
+import { useEffect } from "react";
+import { useBookmarkStore } from "../../stores/bookmarkStore";
+import { useChromeStorage } from "../../hooks/useChromeStorage";
 
-export const BookmarkList = ({ bookmarks }: Props) => {
+export const BookmarkList = () => {
+  const { bucket } = useChromeStorage();
+  const fetchBookmarks = useBookmarkStore((state) => state.fetchBookmarks)
+  const bookmarks = useBookmarkStore((state) => state.bookmarks)
+
+  useEffect(() => {
+    (async () => {
+      const value = await bucket.get();
+      if (value.selectedSpaceId) {
+        await fetchBookmarks(value.selectedSpaceId);
+      }
+    })();
+  }, []);
+
   return (
     <>
       {bookmarks.map((bookmark) => {
