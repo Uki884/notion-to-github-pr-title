@@ -11,7 +11,6 @@ type Props = {
 
 function App({ notionData }: Props) {
   const [spaces, setSpaces] = useState([] as any)
-  const [selectedSpaceId, setSelectedSpaceId] = useState<string>("" as string)
   const [bookmarks, setBookmarks] = useState<any[]>([])
   const { bucket } = useChromeStorage();
   const { getUserSpaces, getBookmarks } = notionApi({
@@ -31,18 +30,13 @@ function App({ notionData }: Props) {
     (async () => {
       const value = await bucket.get();
       if (value.selectedSpaceId) {
-        handleFetchBookMarks(value.selectedSpaceId);
-        setSelectedSpaceId(value.selectedSpaceId);
+        const data = await Promise.all([
+          getUserSpaces(),
+          handleFetchBookMarks(value.selectedSpaceId),
+        ])
+        setSpaces(data[0])
       }
     })();
-  }, []);
-
-  useEffect(() => {
-    const fetch = async () => {
-      const data = await getUserSpaces();
-      setSpaces(data)
-    }
-    fetch()
   }, []);
 
   return (
