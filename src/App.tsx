@@ -2,31 +2,36 @@ import { useEffect, useState } from 'react'
 import './App.css'
 import { NotionData } from './providers/NotionDataProvider';
 import { notionApi } from './libs';
-import { getBucket } from '@extend-chrome/storage';
+import { WorkSpaceSelect } from './features/WorkSpaceSelect';
+import { useChromeStorage } from './hooks/useChromeStorage';
 
 type Props = {
   notionData: NotionData;
 };
 
-interface MyBucket {
-  selectedSpaceId: string | null;
-}
-
-const bucket = getBucket<MyBucket>('my_bucket', 'sync');
-
 function App({ notionData }: Props) {
   const [spaces, setSpaces] = useState([] as any)
   const [selectedSpaceId, setSelectedSpaceId] = useState<string>("" as string)
   const [bookmarks, setBookmarks] = useState<any[]>([])
+  const { bucket } = useChromeStorage();
   const { getUserSpaces, getBookmarks } = notionApi({
     token: notionData.token,
     notionUserId: notionData.notionUserId,
   });
 
+  const handleFetchBookMarks = async (selectedSpaceId: string) => {
+    if (!selectedSpaceId) {
+      return;
+    }
+    const data = await getBookmarks({ spaceViewId: selectedSpaceId });
+    setBookmarks(data);
+  };
+
   useEffect(() => {
     (async () => {
       const value = await bucket.get();
       if (value.selectedSpaceId) {
+        handleFetchBookMarks(value.selectedSpaceId);
         setSelectedSpaceId(value.selectedSpaceId);
       }
     })();
@@ -40,31 +45,9 @@ function App({ notionData }: Props) {
     fetch()
   }, []);
 
-  useEffect(() => {
-    const fetch = async () => {
-      if (!selectedSpaceId) {
-        return;
-      }
-      const data = await getBookmarks({ spaceViewId: selectedSpaceId });
-      setBookmarks(data);
-    };
-    fetch();
-  }, [selectedSpaceId]);
-
-  const handleSpaceClick = async (space: any) => {
-    // TODO: chromeのstorageに保存
-    bucket.set({ selectedSpaceId: space.view.spaceViewId });
-    setSelectedSpaceId(space.view.spaceViewId);
-  };
-
   return (
     <div className="App">
-      {spaces.map((space: any) => (
-        <div key={space.id}>
-          {/* <img src={space.icon} alt={space.name} /> */}
-          <button onClick={() => handleSpaceClick(space)}>{space.name}</button>
-        </div>
-      ))}
+      <WorkSpaceSelect spaces={spaces} onFetchBookMarks={handleFetchBookMarks} />
       {bookmarks.map((bookmark) => {
         const title = bookmark?.properties ? bookmark?.properties?.title[0][0] : "";
         return (
