@@ -5,6 +5,9 @@ import { useSpaceStore } from './spaceStore'
 
 type Bookmark = {
   id: string
+  format: {
+    page_icon: string
+  }
   properties: {
     title: [[string]]
   }
