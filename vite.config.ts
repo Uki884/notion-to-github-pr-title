@@ -4,14 +4,12 @@ import { crx, defineManifest } from "@crxjs/vite-plugin";
 
 const manifest = defineManifest({
   manifest_version: 3,
-  description: "This is an example extension",
-  name: "example",
-  version: "0.1.0",
-  // action: {
-  //   default_icon: "icons/icon128.png",
-  //   default_title: "example",
-  // },
-  action: { default_popup: "index.html" },
+  description: "Notionのお気に入りにすぐにアクセスできます",
+  name: "Notion Bookmarks",
+  version: "0.0.0",
+  icons: {
+    128: "public/logo.png"
+  },
   background: {
     service_worker: "src/chrome/background/index.ts",
   },
