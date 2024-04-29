@@ -10,6 +10,11 @@ const manifest = defineManifest({
   icons: {
     128: "public/logo.png"
   },
+  action: {
+    default_icon: "public/logo.png",
+    default_title: "example",
+    default_popup: "index.html"
+  },
   background: {
     service_worker: "src/chrome/background/index.ts",
   },
