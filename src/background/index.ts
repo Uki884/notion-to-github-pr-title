@@ -1,4 +1,4 @@
-import { getTitle } from '../../libs/notionhqClient';
+import { getTitle } from '../notionApiClient';
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "getBranchName") {
