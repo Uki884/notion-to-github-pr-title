@@ -1,4 +1,4 @@
-(function() {
+const getBranchName = () => {
   const container = document.getElementById('head-ref-selector');
   if (container) {
     const element = container.querySelector('.Button-label .css-truncate-target') as HTMLElement;
@@ -7,7 +7,9 @@
       chrome.runtime.sendMessage({ action: "getBranchName", branchName });
     }
   }
-})();
+}
+
+window.addEventListener("load", getBranchName, false);
 
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
