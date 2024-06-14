@@ -4,9 +4,9 @@ import { crx, defineManifest } from "@crxjs/vite-plugin";
 
 const manifest = defineManifest({
   manifest_version: 3,
-  description: "Notionのお気に入りにすぐにアクセスできます",
-  name: "Notion Bookmarks",
-  version: "0.0.0",
+  description: "ブランチ名からnotionのタスク名を取得して、githubのPRタイトルを自動で入力します。",
+  name: "Notion To Github PR Title",
+  version: "0",
   icons: {
     128: "public/logo.png"
   },
@@ -16,13 +16,19 @@ const manifest = defineManifest({
     default_popup: "index.html"
   },
   background: {
-    service_worker: "src/chrome/background/index.ts",
+    service_worker: "src/background/index.ts",
   },
   options_ui: {
-    page: "src/chrome/options/index.html",
+    page: "src/options/index.html",
   },
+  content_scripts: [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["src/contentScript/index.ts"],
+    }
+  ],
   permissions: ["activeTab", "storage", "cookies"],
-  host_permissions: ["*://*.notion.so/"],
+  host_permissions: ["https://api.notion.com/v1/*"],
 });
 
 export default defineConfig({
