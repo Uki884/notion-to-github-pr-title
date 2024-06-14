@@ -1,12 +1,12 @@
 const getBranchName = () => {
-  const container = document.getElementById('head-ref-selector');
-  if (container) {
-    const element = container.querySelector('.Button-label .css-truncate-target') as HTMLElement;
+  waitForElementToDisplay('#head-ref-selector', () => {
+    const selector = document.querySelector('#head-ref-selector');
+    const element = selector?.querySelector('.Button-label .css-truncate-target') as HTMLElement;
     const branchName = element ? element.textContent : null;
     if (branchName) {
       chrome.runtime.sendMessage({ action: "getBranchName", branchName });
     }
-  }
+  });
 }
 
 window.addEventListener("load", getBranchName, false);
@@ -23,3 +23,17 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   }
 });
+
+function waitForElementToDisplay(selector: any, callback: (e: HTMLElement) => void) {
+  console.log('waiting for element', selector);
+
+  if(document.querySelector(selector)!=null) {
+      callback(selector);
+      return;
+  }
+  else {
+    setTimeout(function() {
+      waitForElementToDisplay(selector, callback);
+    }, 300);
+  }
+}
