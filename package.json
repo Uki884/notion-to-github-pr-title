@@ -5,17 +5,29 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc && vite build",
-    "preview": "vite preview"
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "svelte-check --tsconfig ./tsconfig.json",
+    "format": "prettier --write ."
   },
   "dependencies": {
-    "@notionhq/client": "^2.2.15"
+    "@notionhq/client": "^2.2.15",
+    "tailwindcss": "^3.4.4"
   },
   "devDependencies": {
     "@crxjs/vite-plugin": "^2.0.0-beta.23",
+    "@sveltejs/vite-plugin-svelte": "^3.1.1",
+    "@tsconfig/svelte": "^5.0.4",
     "@types/chrome": "^0.0.266",
-    "@vitejs/plugin-react": "^2.2.0",
-    "typescript": "^4.9.5",
-    "vite": "^3.2.3"
+    "flowbite": "^2.3.0",
+    "flowbite-svelte": "^0.46.1",
+    "flowbite-svelte-icons": "^1.6.1",
+    "prettier": "^3.3.2",
+    "prettier-plugin-svelte": "^3.2.4",
+    "svelte": "^4.2.18",
+    "svelte-check": "^3.8.0",
+    "svelte-preprocess": "^6.0.1",
+    "typescript": "5.4.5",
+    "vite": "5.3.1"
   }
 }
