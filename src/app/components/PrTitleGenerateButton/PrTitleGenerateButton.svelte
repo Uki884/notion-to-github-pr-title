@@ -1,5 +1,5 @@
 <script lang="ts">
-  import { Button } from 'flowbite-svelte';
+  import { Button } from "flowbite-svelte";
 
   const handleGenerate = () => {
     const selector = document.querySelector("#head-ref-selector");
@@ -7,13 +7,19 @@
       ".Button-label .css-truncate-target",
     ) as HTMLElement;
     const branchName = element ? element.textContent : null;
-    console.log('branchName', branchName);
+    console.log("branchName", branchName);
 
     if (branchName) {
       chrome.runtime.sendMessage({ action: "getBranchName", branchName });
     }
-  }
+  };
 </script>
+
+<div class="container">
+  <Button color="dark" on:click={handleGenerate} size="sm"
+    >タイトル自動入力</Button
+  >
+</div>
 
 <style>
   .container {
@@ -22,8 +28,3 @@
     justify-content: flex-end;
   }
 </style>
-
-<div class="container">
-  <Button color="dark" on:click={handleGenerate} size="sm">タイトル自動入力</Button>
-</div>
-
