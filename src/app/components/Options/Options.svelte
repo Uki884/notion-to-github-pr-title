@@ -1,21 +1,14 @@
 <script lang="ts">
   import { storage } from "@/app/lib/storage";
 
-  export let count: number;
+  export let authToken: string = "";
+  export let databaseId: string = "";
+
   let successMessage: string | null = null;
 
-  function increment() {
-      count += 1;
-  }
-
-  function decrement() {
-      count -= 1;
-  }
-
   function save() {
-    storage.set({ count }).then(() => {
-        successMessage = "Options saved!";
-
+    storage.set({ authToken, databaseId }).then(() => {
+      successMessage = "Options saved!";
       setTimeout(() => {
           successMessage = null;
       }, 1500);
@@ -25,13 +18,16 @@
 </script>
 
 <div class="container">
-  <p>Current count: <b>{count}</b></p>
   <div>
-      <button on:click={decrement}>-</button>
-      <button on:click={increment}>+</button>
-      <button on:click={save}>Save</button>
-      {#if successMessage}<span class="success">{successMessage}</span>{/if}
+      <label for="authToken">Notion API Key</label>
+      <input type="text" id="authToken" bind:value={authToken} placeholder="enter your token" />
   </div>
+  <div>
+      <label for="databaseId">Notion DataBase ID</label>
+      <input type="text" id="databaseId" bind:value={databaseId} placeholder="enter your database id" />
+  </div>
+  <button on:click={save}>Save</button>
+  {#if successMessage}<span class="success">{successMessage}</span>{/if}
 </div>
 
 <style>
