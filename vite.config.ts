@@ -14,8 +14,8 @@ const manifest = defineManifest({
   },
   action: {
     default_icon: "public/logo.png",
-    default_title: "example",
-    default_popup: "index.html",
+    default_title: "Notion To Github PR Title",
+    // default_popup: "index.html",
   },
   background: {
     service_worker: "src/background/index.ts",
