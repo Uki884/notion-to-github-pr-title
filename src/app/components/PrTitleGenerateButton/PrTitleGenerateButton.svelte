@@ -17,13 +17,13 @@
 
 <style>
   .container {
-    width: 100%;
+    width: 160px;
     display: flex;
     justify-content: flex-end;
   }
 </style>
 
 <div class="container">
-  <Button color="dark" on:click={handleGenerate} size="sm">自動入力</Button>
+  <Button color="dark" on:click={handleGenerate} size="sm">タイトル自動入力</Button>
 </div>
 
