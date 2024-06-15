@@ -25,7 +25,7 @@ const manifest = defineManifest({
   },
   content_scripts: [
     {
-      matches: ["<all_urls>"],
+      matches: ["https://github.com/*"],
       js: ["src/contentScript/index.ts"],
     },
   ],
