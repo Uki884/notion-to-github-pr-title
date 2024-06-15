@@ -1,21 +1,26 @@
-window.addEventListener(
-  "load",
-  () => {
-    waitForElementToDisplay("#head-ref-selector", () => {
-      const selector = document.querySelector("#head-ref-selector");
-      const element = selector?.querySelector(
-        ".Button-label .css-truncate-target",
-      ) as HTMLElement;
-      const branchName = element ? element.textContent : null;
-      console.info("branchName", branchName);
+import "flowbite/dist/flowbite.css";
 
-      if (branchName) {
-        chrome.runtime.sendMessage({ action: "getBranchName", branchName });
-      }
+import PrTitleGenerateButton from '@/app/components/PrTitleGenerateButton/PrTitleGenerateButton.svelte';
+
+console.log("Notion To Github PR Title loaded");
+
+async function mountGenerateButton() {
+  const targetElement = await waitForElement('#pull_request_title_header');
+  console.log('targetElement', targetElement);
+
+  if (targetElement) {
+    targetElement.style.display = 'flex';
+    targetElement.style.justifyContent = 'space-between';
+    targetElement.style.alignItems = 'center';
+
+    const mountPoint = document.createElement('div');
+    targetElement.appendChild(mountPoint);
+
+    new PrTitleGenerateButton({
+      target: mountPoint,
     });
-  },
-  false,
-);
+  }
+}
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "setTitle") {
@@ -31,18 +36,32 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   }
 });
 
-function waitForElementToDisplay(
-  selector: any,
-  callback: (e: HTMLElement) => void,
-) {
-  console.log("waiting for element", selector);
+function waitForElement(selector: string): Promise<HTMLElement> {
+  return new Promise((resolve) => {
+    const observer = new MutationObserver((mutations) => {
+      for (const mutation of mutations) {
+        const element = document.querySelector(selector);
+        if (element) {
+          observer.disconnect();
+          resolve(element as HTMLElement);
+          break;
+        }
+      }
+    });
 
-  if (document.querySelector(selector) != null) {
-    callback(selector);
-    return;
-  } else {
-    setTimeout(function () {
-      waitForElementToDisplay(selector, callback);
-    }, 300);
-  }
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true
+    });
+
+    // なぜかうまく動かないのでコメントアウトする
+    // 既に存在する場合は即座に解決
+    const element = document.querySelector(selector);
+    if (element) {
+      observer.disconnect();
+      resolve(element as HTMLElement);
+    }
+  });
 }
+
+mountGenerateButton();
