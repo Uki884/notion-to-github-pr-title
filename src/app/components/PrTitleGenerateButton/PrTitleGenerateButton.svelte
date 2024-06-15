@@ -1,12 +1,29 @@
 <script lang="ts">
-  export let name: string;
+  import { Button } from 'flowbite-svelte';
+
+  const handleGenerate = () => {
+    const selector = document.querySelector("#head-ref-selector");
+    const element = selector?.querySelector(
+      ".Button-label .css-truncate-target",
+    ) as HTMLElement;
+    const branchName = element ? element.textContent : null;
+    console.log('branchName', branchName);
+
+    if (branchName) {
+      chrome.runtime.sendMessage({ action: "getBranchName", branchName });
+    }
+  }
 </script>
 
 <style>
-  /* 任意のスタイル */
+  .container {
+    width: 100%;
+    display: flex;
+    justify-content: flex-end;
+  }
 </style>
 
-<div>
-  Hello {name}!
+<div class="container">
+  <Button color="dark" on:click={handleGenerate}>生成</Button>
 </div>
 

@@ -1,21 +1,32 @@
+import "flowbite/dist/flowbite.css";
+
+import PrTitleGenerateButton from '@/app/components/PrTitleGenerateButton/PrTitleGenerateButton.svelte';
+
 window.addEventListener(
   "load",
   () => {
-    waitForElementToDisplay("#head-ref-selector", () => {
-      const selector = document.querySelector("#head-ref-selector");
-      const element = selector?.querySelector(
-        ".Button-label .css-truncate-target",
-      ) as HTMLElement;
-      const branchName = element ? element.textContent : null;
-      console.info("branchName", branchName);
-
-      if (branchName) {
-        chrome.runtime.sendMessage({ action: "getBranchName", branchName });
-      }
-    });
+    mountGenerateButton();
   },
   false,
 );
+
+function mountGenerateButton() {
+  const targetElement = document.querySelector('#pull_request_title_header') as HTMLElement;
+  console.log('targetElement', targetElement);
+
+  if (targetElement) {
+    targetElement.style.display = 'flex';
+    targetElement.style.justifyContent = 'space-between';
+    targetElement.style.alignItems = 'center';
+
+    const mountPoint = document.createElement('div');
+    targetElement.appendChild(mountPoint);
+
+    new PrTitleGenerateButton({
+      target: mountPoint,
+    });
+  }
+}
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "setTitle") {
@@ -30,19 +41,3 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
     }
   }
 });
-
-function waitForElementToDisplay(
-  selector: any,
-  callback: (e: HTMLElement) => void,
-) {
-  console.log("waiting for element", selector);
-
-  if (document.querySelector(selector) != null) {
-    callback(selector);
-    return;
-  } else {
-    setTimeout(function () {
-      waitForElementToDisplay(selector, callback);
-    }, 300);
-  }
-}
