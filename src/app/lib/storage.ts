@@ -1,9 +1,13 @@
 type Storage = {
   count: number;
+  authToken: string;
+  databaseId: string;
 };
 
 const defaultStorage: Storage = {
   count: 0,
+  authToken: '',
+  databaseId: '',
 };
 
 export const storage = {

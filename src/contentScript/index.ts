@@ -3,6 +3,8 @@ window.addEventListener("load", () => {
     const selector = document.querySelector('#head-ref-selector');
     const element = selector?.querySelector('.Button-label .css-truncate-target') as HTMLElement;
     const branchName = element ? element.textContent : null;
+    console.info('branchName', branchName);
+
     if (branchName) {
       chrome.runtime.sendMessage({ action: "getBranchName", branchName });
     }
