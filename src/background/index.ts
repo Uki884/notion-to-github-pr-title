@@ -1,6 +1,8 @@
-import { getTitle } from '../notionApiClient';
+import { notionApi } from '@/notionApiClient';
 
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+  const { getTaskTitle } = notionApi()
+
   if (request.action === "getBranchName") {
     const branchName = request.branchName;
     const branchSuffix = extractBranchSuffix(branchName);
@@ -11,8 +13,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
 
     const match = branchName.match(/\d+/);
     const uniqueId = Number(match[0]);
-    
-    getTitle({ uniqueId: uniqueId }).then((title) => {
+    getTaskTitle({ uniqueId: uniqueId }).then((title) => {
       
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0].id) {
