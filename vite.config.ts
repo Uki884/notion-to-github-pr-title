@@ -1,5 +1,5 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { svelte } from '@sveltejs/vite-plugin-svelte'
 import { crx, defineManifest } from "@crxjs/vite-plugin";
 import path from 'path';
 
@@ -33,7 +33,7 @@ const manifest = defineManifest({
 });
 
 export default defineConfig({
-  plugins: [react(), crx({ manifest })],
+  plugins: [svelte(), crx({ manifest })],
   resolve: {
     alias: {                               
       '@': path.resolve(__dirname, './src')
