@@ -1,6 +1,8 @@
 import { notionApi } from "@/notionApiClient";
 import { storage } from "@/app/lib/storage";
 
+const suffix = 'SGN';
+
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   const storageData = await storage.get();
 
@@ -16,6 +18,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 
   if (request.action === "getBranchName") {
     const branchName = request.branchName;
+
     const branchSuffix = extractBranchSuffix(branchName);
 
     if (!branchSuffix) {
@@ -23,9 +26,15 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       return false;
     }
 
-    const match = branchName.match(/\d+/);
-    const uniqueId = Number(match[0]);
-    getTaskTitle({ uniqueId: uniqueId }).then((title) => {
+    const uniqueId = extractUniqueId(branchSuffix);
+    console.log(`UniqueId: ${uniqueId}`);
+
+    if (!uniqueId) {
+      console.error("uniqueId not found");
+      return false;
+    }
+  
+    getTaskTitle({ uniqueId: Number(uniqueId) }).then((title) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0].id) {
           chrome.tabs.sendMessage(
@@ -48,6 +57,21 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
 });
 
 const extractBranchSuffix = (branchName: string): string | null => {
+  console.log(`Branch name: ${branchName}`);
+
   const match = branchName.match(/SGN-\d+/);
+
+  console.log(`Match: ${match}`);
+
   return match ? match[0] : null;
+};
+
+const extractUniqueId = (branchSuffix: string): number | null => {
+  const branchNumber = branchSuffix.match(/SGN-(\d+)/);
+
+  if (!branchNumber) {
+    return null;
+  }
+
+  return Number(branchNumber[1]);
 };
