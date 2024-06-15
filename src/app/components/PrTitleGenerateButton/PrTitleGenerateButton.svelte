@@ -24,6 +24,6 @@
 </style>
 
 <div class="container">
-  <Button color="dark" on:click={handleGenerate}>生成</Button>
+  <Button color="dark" on:click={handleGenerate}>自動入力</Button>
 </div>
 

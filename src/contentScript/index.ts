@@ -2,7 +2,7 @@ import "flowbite/dist/flowbite.css";
 
 import PrTitleGenerateButton from '@/app/components/PrTitleGenerateButton/PrTitleGenerateButton.svelte';
 
-mountGenerateButton()
+console.log("Notion To Github PR Title loaded");
 
 async function mountGenerateButton() {
   const targetElement = await waitForElement('#pull_request_title_header');
@@ -56,10 +56,12 @@ function waitForElement(selector: string): Promise<HTMLElement> {
 
     // なぜかうまく動かないのでコメントアウトする
     // 既に存在する場合は即座に解決
-    // const element = document.querySelector(selector);
-    // if (element) {
-    //   observer.disconnect();
-    //   resolve(element as HTMLElement);
-    // }
+    const element = document.querySelector(selector);
+    if (element) {
+      observer.disconnect();
+      resolve(element as HTMLElement);
+    }
   });
 }
+
+mountGenerateButton();
