@@ -9,7 +9,7 @@ type Options = {
 
 export const notionApi = ({ }: Options = {}) => {
   const notion = new Client({
-    auth: "secret_SrMXlxSvyS9F8C8zLiJIS5xCUQaVZbBcMDhvkpk7hbl",
+    auth: "",
   });
 
   const getTaskTitle = async ({ uniqueId }: { uniqueId: number }) => {
