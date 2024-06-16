@@ -26,7 +26,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       return false;
     }
 
-    const uniqueId = extractUniqueId(branchSuffix);
+    const uniqueId = Number(branchSuffix.taskId);
     console.log(`UniqueId: ${uniqueId}`);
 
     if (!uniqueId) {
@@ -56,22 +56,12 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   return true;
 });
 
-const extractBranchSuffix = (branchName: string): string | null => {
+const extractBranchSuffix = (branchName: string) => {
   console.log(`Branch name: ${branchName}`);
 
   const match = branchName.match(/SGN-\d+/);
 
   console.log(`Match: ${match}`);
 
-  return match ? match[0] : null;
-};
-
-const extractUniqueId = (branchSuffix: string): number | null => {
-  const branchNumber = branchSuffix.match(/SGN-(\d+)/);
-
-  if (!branchNumber) {
-    return null;
-  }
-
-  return Number(branchNumber[1]);
+  return match ? { suffix: match[0], taskId: match[1] } : null;
 };
