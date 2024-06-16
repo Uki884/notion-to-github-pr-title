@@ -23,18 +23,4 @@ async function mountGenerateButton() {
   }
 }
 
-chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
-  if (request.action === "setTitle") {
-    const inputElement = document.getElementById(
-      "pull_request_title",
-    ) as HTMLInputElement;
-    if (inputElement) {
-      inputElement.value = request.title;
-      sendResponse({ status: "success" });
-    } else {
-      sendResponse({ status: "error", message: "Input element not found" });
-    }
-  }
-});
-
 mountGenerateButton();
