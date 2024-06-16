@@ -1,8 +1,6 @@
 import { notionApi } from "@/notionApiClient";
 import { storage } from "@/app/lib/storage";
 
-const suffix = 'SGN';
-
 chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   const storageData = await storage.get();
 
@@ -16,62 +14,70 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
     databaseId: storageData.databaseId,
   });
 
-  if (request.action === "getBranchName") {
-    const branchName = request.branchName;
+  switch (request.action) {
+    case 'getBranchName': {
+      const extractedBranch = extractBranch(request.branchName);
 
-    const branchSuffix = extractBranchSuffix(branchName);
-
-    if (!branchSuffix) {
-      console.error("Branch suffix not found");
-      return false;
-    }
-
-    const uniqueId = extractUniqueId(branchSuffix);
-    console.log(`UniqueId: ${uniqueId}`);
-
-    if (!uniqueId) {
-      console.error("uniqueId not found");
-      return false;
-    }
+      if (!extractedBranch) {
+        return false;
+      }
   
-    getTaskTitle({ uniqueId: Number(uniqueId) }).then((title) => {
-      chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-        if (tabs[0].id) {
-          chrome.tabs.sendMessage(
-            tabs[0].id,
-            { action: "setTitle", title: title + `[${branchSuffix}]` },
-            (response) => {
-              if (response.status === "success") {
-                console.log("Title set successfully");
-              } else {
-                console.error("Error setting title:", response.message);
-              }
-            },
-          );
-        }
-      });
-    });
-    return true;
+      const { uniqueId, taskId } = extractedBranch;
+  
+      const title = await getTaskTitle({ uniqueId: uniqueId });
+      setTitle(title + `[${taskId}]`)    
+      return true;
+    } 
+    default: {
+      console.error("Invalid action");
+      return false;
+    }
   }
-  return true;
 });
 
-const extractBranchSuffix = (branchName: string): string | null => {
+const extractBranch = (branchName: string) => {
+  const extractedBranchName = extractBranchName(branchName);
+
+  if (!extractedBranchName) {
+    console.error("Branch suffix not found");
+    return undefined;
+  }
+
+  const { uniqueId, taskId, suffix } = extractedBranchName;
+  console.log(`suffix: 「${suffix}」 uniqueId: 「${uniqueId}」 taskId: 「${taskId}」`);
+
+  if (!uniqueId) {
+    console.error("uniqueId not found");
+    return undefined;
+  }
+
+  return { uniqueId, taskId, suffix };
+};
+
+const setTitle = (title: string) => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+  if (tabs[0].id) {
+    chrome.tabs.sendMessage(
+      tabs[0].id,
+      { action: "setTitle", title },
+      (response) => {
+        if (response.status === "success") {
+          console.log("Title set successfully");
+        } else {
+          console.error("Error setting title:", response.message);
+        }
+      },
+    );
+  }
+});
+}
+
+const extractBranchName = (branchName: string) => {
   console.log(`Branch name: ${branchName}`);
 
-  const match = branchName.match(/SGN-\d+/);
+  const match = branchName.match(/(SGN)-(\d+)/);
 
   console.log(`Match: ${match}`);
 
-  return match ? match[0] : null;
-};
-
-const extractUniqueId = (branchSuffix: string): number | null => {
-  const branchNumber = branchSuffix.match(/SGN-(\d+)/);
-
-  if (!branchNumber) {
-    return null;
-  }
-
-  return Number(branchNumber[1]);
+  return match ? { taskId: match[0], suffix: match[1], uniqueId: Number(match[2]) } : null;
 };
