@@ -15,19 +15,19 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   });
 
   switch (request.action) {
-    case 'getBranchName': {
+    case "getBranchName": {
       const extractedBranch = extractBranch(request.branchName);
 
       if (!extractedBranch) {
         return false;
       }
-  
+
       const { uniqueId, taskId } = extractedBranch;
-  
+
       const title = await getTaskTitle({ uniqueId: uniqueId });
-      setTitle(title + `[${taskId}]`)    
+      setTitle(title + `[${taskId}]`);
       return true;
-    } 
+    }
     default: {
       console.error("Invalid action");
       return false;
@@ -44,7 +44,9 @@ const extractBranch = (branchName: string) => {
   }
 
   const { uniqueId, taskId, suffix } = extractedBranchName;
-  console.log(`suffix: 「${suffix}」 uniqueId: 「${uniqueId}」 taskId: 「${taskId}」`);
+  console.log(
+    `suffix: 「${suffix}」 uniqueId: 「${uniqueId}」 taskId: 「${taskId}」`,
+  );
 
   if (!uniqueId) {
     console.error("uniqueId not found");
@@ -56,21 +58,21 @@ const extractBranch = (branchName: string) => {
 
 const setTitle = (title: string) => {
   chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
-  if (tabs[0].id) {
-    chrome.tabs.sendMessage(
-      tabs[0].id,
-      { action: "setTitle", title },
-      (response) => {
-        if (response.status === "success") {
-          console.log("Title set successfully");
-        } else {
-          console.error("Error setting title:", response.message);
-        }
-      },
-    );
-  }
-});
-}
+    if (tabs[0].id) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        { action: "setTitle", title },
+        (response) => {
+          if (response.status === "success") {
+            console.log("Title set successfully");
+          } else {
+            console.error("Error setting title:", response.message);
+          }
+        },
+      );
+    }
+  });
+};
 
 const extractBranchName = (branchName: string) => {
   console.log(`Branch name: ${branchName}`);
@@ -79,5 +81,7 @@ const extractBranchName = (branchName: string) => {
 
   console.log(`Match: ${match}`);
 
-  return match ? { taskId: match[0], suffix: match[1], uniqueId: Number(match[2]) } : null;
+  return match
+    ? { taskId: match[0], suffix: match[1], uniqueId: Number(match[2]) }
+    : null;
 };
