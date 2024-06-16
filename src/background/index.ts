@@ -19,27 +19,28 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   if (request.action === "getBranchName") {
     const branchName = request.branchName;
 
-    const branchSuffix = extractBranchSuffix(branchName);
+    const extractedBranchName = extractBranchName(branchName);
 
-    if (!branchSuffix) {
+    if (!extractedBranchName) {
       console.error("Branch suffix not found");
       return false;
     }
 
-    const uniqueId = Number(branchSuffix.taskId);
-    console.log(`UniqueId: ${uniqueId}`);
+    const { uniqueId, taskId, suffix } = extractedBranchName;
+
+    console.log(`suffix: 「${suffix}」 uniqueId: 「${uniqueId}」 taskId: 「${taskId}」`);
 
     if (!uniqueId) {
       console.error("uniqueId not found");
       return false;
     }
   
-    getTaskTitle({ uniqueId: Number(uniqueId) }).then((title) => {
+    getTaskTitle({ uniqueId: uniqueId }).then((title) => {
       chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
         if (tabs[0].id) {
           chrome.tabs.sendMessage(
             tabs[0].id,
-            { action: "setTitle", title: title + `[${branchSuffix}]` },
+            { action: "setTitle", title: title + `[${taskId}]` },
             (response) => {
               if (response.status === "success") {
                 console.log("Title set successfully");
@@ -56,12 +57,12 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
   return true;
 });
 
-const extractBranchSuffix = (branchName: string) => {
+const extractBranchName = (branchName: string) => {
   console.log(`Branch name: ${branchName}`);
 
-  const match = branchName.match(/SGN-\d+/);
+  const match = branchName.match(/(SGN)-(\d+)/);
 
   console.log(`Match: ${match}`);
 
-  return match ? { suffix: match[0], taskId: match[1] } : null;
+  return match ? { taskId: match[0], suffix: match[1], uniqueId: Number(match[2]) } : null;
 };
