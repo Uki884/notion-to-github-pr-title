@@ -43,7 +43,7 @@
     {#if isLoading}
       <Spinner class="me-3" size="4" color="white" />生成中...
     {:else}
-    タイトル生成
+    PRタイトル生成
     {/if}
   </Button>
 </div>
