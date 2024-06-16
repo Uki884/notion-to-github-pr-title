@@ -1,9 +1,9 @@
 <script lang="ts">
   import { Button, Spinner } from "flowbite-svelte";
   import { onMount } from "svelte";
-    
+
   let isLoading = false;
-  
+
   const handleGenerate = () => {
     isLoading = true;
     const selector = document.querySelector("#head-ref-selector");
@@ -35,15 +35,14 @@
       }
     });
   });
-
 </script>
 
 <div class="container">
-  <Button color="dark" on:click={handleGenerate} size="sm" isLoading={isLoading}>
+  <Button color="dark" on:click={handleGenerate} size="sm" {isLoading}>
     {#if isLoading}
       <Spinner class="me-3" size="4" color="white" />生成中...
     {:else}
-    PRタイトル生成
+      PRタイトル生成
     {/if}
   </Button>
 </div>
