@@ -85,3 +85,9 @@ const extractBranchName = (branchName: string) => {
     ? { taskId: match[0], suffix: match[1], uniqueId: Number(match[2]) }
     : null;
 };
+
+chrome.runtime.onInstalled.addListener(() => {
+  chrome.tabs.create({
+    url: "chrome-extension://" + chrome.runtime.id + "/src/options/index.html"
+  });
+});
