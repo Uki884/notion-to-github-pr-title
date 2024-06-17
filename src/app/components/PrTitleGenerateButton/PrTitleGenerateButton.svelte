@@ -3,6 +3,7 @@
   import { onMount } from "svelte";
 
   let isLoading = false;
+  let errorMessage = "";
 
   const handleGenerate = () => {
     isLoading = true;
@@ -33,6 +34,11 @@
         }
         isLoading = false; // メッセージ受信後にローディングを終了
       }
+
+      if (request.action === "branchError") {
+        isLoading = false; // エラー時にローディングを終了
+        errorMessage = 'ブランチ名からタスクIDが取得できませんでした。';
+      }
     });
   });
 </script>
@@ -45,6 +51,9 @@
       PRタイトル生成
     {/if}
   </Button>
+  {#if errorMessage}
+    <p class="error">{errorMessage}</p>
+  {/if}
 </div>
 
 <style>
@@ -52,5 +61,13 @@
     width: 160px;
     display: flex;
     justify-content: flex-end;
+    flex-direction: column;
+  }
+
+  .error {
+    font-size: 12px;
+    color: red;
+    margin: 0;
+    margin-top: 4px;
   }
 </style>

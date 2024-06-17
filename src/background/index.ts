@@ -19,6 +19,7 @@ chrome.runtime.onMessage.addListener(async (request, sender, sendResponse) => {
       const extractedBranch = extractBranch(request.branchName);
 
       if (!extractedBranch) {
+        branchError();
         return false;
       }
 
@@ -69,6 +70,17 @@ const setTitle = (title: string) => {
             console.error("Error setting title:", response.message);
           }
         },
+      );
+    }
+  });
+};
+
+const branchError = () => {
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs[0].id) {
+      chrome.tabs.sendMessage(
+        tabs[0].id,
+        { action: "branchError" },
       );
     }
   });
