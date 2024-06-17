@@ -22,10 +22,10 @@ export const notionApi = (
         },
       },
     });
-
-    const title = (response.results[0] as any).properties["タスク名"]
-      .rich_text[0].plain_text as string;
-
+    const targetTask = (response.results[0] as any).properties["タスク名"]
+    console.log('targetTask', targetTask)
+    const title = targetTask.title[0].plain_text as string;
+    console.log('title', title)
     return title;
   };
 
