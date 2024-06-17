@@ -1,5 +1,4 @@
-import "flowbite/dist/flowbite.css";
-
+import "@/app.postcss";
 import PrTitleGenerateButton from "@/app/components/PrTitleGenerateButton/PrTitleGenerateButton.svelte";
 import { waitForElement } from "./waitForElement";
 
