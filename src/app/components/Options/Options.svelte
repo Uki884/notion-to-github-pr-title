@@ -1,13 +1,14 @@
 <script lang="ts">
   import { storage } from "@/app/lib/storage";
-  import { Button, Input, Label, Helper, Alert } from "flowbite-svelte";
+  import { Button, Input, Label, Helper, Alert, Checkbox} from "flowbite-svelte";
   export let authToken: string = "";
   export let databaseId: string = "";
+  export let isAutoInsert: boolean = true;
 
   let successMessage: string | null = null;
 
   function save() {
-    storage.set({ authToken, databaseId }).then(() => {
+    storage.set({ authToken, databaseId, isAutoInsert }).then(() => {
       successMessage = "保存しました";
       setTimeout(() => {
         successMessage = null;
@@ -57,6 +58,17 @@
         <p>
           例:
           https://www.notion.so/5f13a2e971ac4cec98cef9fb83599f63pの場合は「5f13a2e971ac4cec98cef9fb83599f63p」がIDになります
+        </p>
+      </Helper>
+    </div>
+
+    <div>
+      <Checkbox
+        bind:checked={isAutoInsert}
+      >自動入力モード</Checkbox>
+      <Helper class="mt-2">
+        <p>
+          無効にすると自動でPRタイトルを入力されなくなります。
         </p>
       </Helper>
     </div>

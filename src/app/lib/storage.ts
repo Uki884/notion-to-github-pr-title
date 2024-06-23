@@ -1,11 +1,13 @@
 type Storage = {
   authToken: string;
   databaseId: string;
+  isAutoInsert: boolean;
 };
 
 const defaultStorage: Storage = {
   authToken: "",
   databaseId: "",
+  isAutoInsert: false,
 };
 
 export const storage = {
