@@ -8,14 +8,13 @@ const manifest = defineManifest({
   description:
     "ブランチ名からnotionのタスク名を取得して、githubのPRタイトルを自動で入力します。",
   name: "Notion To Github PR Title",
-  version: "0",
+  version: "0.1",
   icons: {
     128: "public/logo.png",
   },
   action: {
     default_icon: "public/logo.png",
     default_title: "Notion To Github PR Title",
-    // default_popup: "index.html",
   },
   background: {
     service_worker: "src/background/index.ts",
