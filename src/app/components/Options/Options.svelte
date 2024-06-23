@@ -24,6 +24,10 @@
     </Alert>
   {/if}
 
+  <div >
+    <h1 class="text-2xl font-bold">Notion To Github PR Title Options</h1>
+  </div>
+
   <form class="forms mt-4">
     <div>
       <Label for="authToken" class="mb-2">Notion API Key</Label>
@@ -38,6 +42,7 @@
         <p>
           NotionAPIキーは<a
             href="https://www.notion.so/my-integrations"
+            class='link'
             target="_blank">こちら</a
           >から入手できます
         </p>
@@ -57,7 +62,7 @@
       <Helper class="mt-2">
         <p>
           例:
-          https://www.notion.so/5f13a2e971ac4cec98cef9fb83599f63pの場合は「5f13a2e971ac4cec98cef9fb83599f63p」がIDになります
+          https://www.notion.so/5f13a2e971ac4cec98cef9fb83599f63pの場合は「5f13a2e971ac4cec98cef9fb83599f63p」がDatabase IDになります
         </p>
       </Helper>
     </div>
@@ -81,6 +86,10 @@
   .container {
     min-width: 500px;
     padding: 20px;
+  }
+
+  .link {
+    font-weight: bold;
   }
 
   .forms {
