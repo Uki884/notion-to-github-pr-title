@@ -7,10 +7,10 @@ function render() {
   const target = document.getElementById("app");
 
   if (target) {
-    storage.get().then(({ authToken = "", databaseId = "" }) => {
+    storage.get().then(({ authToken = "", databaseId = "", isAutoInsert = true }) => {
       new Options({
         target,
-        props: { authToken, databaseId },
+        props: { authToken, databaseId, isAutoInsert },
       });
     });
   }
